@@ -31,6 +31,9 @@ lucide.createIcons({icons});\``);if(typeof d>"u")throw new Error("`createIcons()
 
 
     <style id="admin-extra">
+        input,textarea,select{-webkit-user-select:text;user-select:text}
+        .x-qcard{border:1px solid #e2e8f0;border-radius:.75rem;padding:.85rem;margin-bottom:.75rem;background:#fff;display:grid;gap:.5rem}
+        .x-qhead{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
         .x-tabs{display:flex;gap:.5rem;padding:.75rem 1.5rem 0;background:#f8fafc;border-bottom:1px solid #e2e8f0;flex-wrap:wrap}
         .x-tab{padding:.6rem 1.1rem;border-radius:.75rem .75rem 0 0;font-weight:700;font-size:.8rem;color:#475569;display:flex;gap:.45rem;align-items:center;cursor:pointer;border:1px solid transparent;border-bottom:none;background:transparent}
         .x-tab:hover{background:#eef2f7}
@@ -438,8 +441,7 @@ html.dark #fx-warn h3{color:#fca5a5}
                                     <i data-lucide="building-2" class="w-4 h-4 text-red-800"></i>
                                     <span>Đơn vị công tác / Chi bộ <span class="text-red-600">*</span></span>
                                 </label>
-                                <input type="text" id="candidate-unit" required maxlength="120" placeholder="VD: Chi bộ Phòng Hồ sơ nghiệp vụ"
-                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-300/90 bg-white/85 focus:border-red-700 focus:ring-2 focus:ring-red-700/20 outline-none transition text-slate-900 font-medium">
+                                <select id="candidate-unit" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300/90 bg-white/85 focus:border-red-700 focus:ring-2 focus:ring-red-700/20 outline-none transition text-slate-900 font-medium"><option value="" selected disabled>-- Chọn chi bộ / hình thức dự thi --</option><option value="Chi bộ HSNV Cảnh sát">Chi bộ HSNV Cảnh sát</option><option value="Chi bộ HSNV An ninh">Chi bộ HSNV An ninh</option><option value="Chi bộ Tàng thư CCCP">Chi bộ Tàng thư CCCP</option><option value="Chi bộ Trung tâm TT, DLNV">Chi bộ Trung tâm TT, DLNV</option><option value="Thí sinh tự do">Thí sinh tự do</option></select>
                             </div>
                         </div>
 
@@ -844,6 +846,7 @@ html.dark #fx-warn h3{color:#fca5a5}
 
                 <div class="x-tabs no-print">
                     <button type="button" id="admin-tab-results" class="x-tab active" onclick="switchAdminTab('results')"><i data-lucide="bar-chart-3" class="w-4 h-4"></i>Kết quả thi &amp; Giám sát</button>
+                    <button type="button" id="admin-tab-exams" class="x-tab" onclick="switchAdminTab('exams')"><i data-lucide="file-plus-2" class="w-4 h-4"></i>Tạo đề thi</button>
                     <button type="button" id="admin-tab-docs" class="x-tab" onclick="switchAdminTab('docs')"><i data-lucide="library" class="w-4 h-4"></i>Quản lý văn bản tham khảo</button>
                 </div>
 <div id="admin-panel-results" class="p-6">
@@ -923,6 +926,28 @@ html.dark #fx-warn h3{color:#fca5a5}
                             </tbody>
                         </table>
                     </div>
+                </div>
+<div id="admin-panel-exams" class="p-6 hidden">
+                    <div class="x-legend" style="margin-bottom:1rem">Tạo đề thi mới gồm <strong>trắc nghiệm</strong> (2–4 phương án, chọn đáp án đúng) và <strong>điền vào ô trống</strong>: gõ <strong>___</strong> (3 dấu gạch dưới) ở chỗ cần điền. Đáp án: các cách viết chấp nhận cho một ô cách nhau bằng <strong>|</strong>; nhiều ô cách nhau bằng <strong>;;</strong> (VD: <em>Đại hội VI | Đại hội lần thứ VI ;; 1986</em>). Không phân biệt hoa/thường, có phân biệt dấu. Đề lưu xong hiển thị ngay trong ô "Chọn Chuyên đề" ở Phòng thi.</div>
+                    <div class="x-form-grid">
+                        <div class="x-span-all"><label class="x-label" for="exam-b-title">Tên đề thi *</label><input type="text" id="exam-b-title" maxlength="200" class="x-input" placeholder="VD: Kiểm tra nhanh Nghị quyết 45-NQ/TW"></div>
+                        <div class="x-span-all"><label class="x-label" for="exam-b-desc">Mô tả (không bắt buộc)</label><input type="text" id="exam-b-desc" maxlength="500" class="x-input"></div>
+                        <div><label class="x-label" for="exam-b-dur">Thời gian làm bài (phút, 1–120)</label><input type="number" id="exam-b-dur" min="1" max="120" value="20" class="x-input"></div>
+                    </div>
+                    <div style="margin-top:1rem"><label class="x-label" for="exam-b-paste">Dán nhanh nội dung câu hỏi</label>
+                        <textarea id="exam-b-paste" rows="10" class="x-input" style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.8rem"></textarea>
+                        <p style="font-size:.78rem;color:#475569;margin:.4rem 0 .6rem">Mỗi câu có 2–4 phương án (A, B, C, D). Chỉ rõ đáp án đúng bằng dấu <b>*</b> đặt trước phương án đúng, hoặc thêm dòng <b>Đáp án: X</b> sau các phương án. Câu điền ô trống: viết đáp án ngay trong câu dạng <b>[[2021]]</b> / <b>[[Hà Nội|Hà nội]]</b> (cách viết khác ngăn bằng |), hoặc để chỗ trống <b>____</b> rồi thêm dòng <b>Điền: Hà Nội</b> (nhiều ô ngăn bằng ;;). Tối đa 200 câu/đề.</p>
+                        <button type="button" id="exam-b-parse" class="x-btn x-btn-primary">Phân tích &amp; thêm vào đề</button></div>
+                    <div id="exam-builder-list" style="margin-top:1rem"></div>
+                    <div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center">
+                        <button type="button" id="exam-b-add-mcq" class="x-btn x-btn-ghost">+ Câu trắc nghiệm</button>
+                        <button type="button" id="exam-b-add-fill" class="x-btn x-btn-ghost">+ Câu điền vào ô trống</button>
+                        <button type="button" id="exam-b-save" class="x-btn x-btn-primary"><span id="exam-b-save-label">Lưu đề thi</span></button>
+                        <button type="button" id="exam-b-cancel" class="x-btn x-btn-ghost hidden">Hủy sửa</button>
+                        <span id="exam-b-msg" class="x-msg"></span>
+                    </div>
+                    <h3 style="margin:1.5rem 0 .6rem;font-weight:800;font-size:.85rem;text-transform:uppercase;color:#7a0000">Đề thi đã tạo (<span id="exam-b-count">0</span>)</h3>
+                    <div id="exam-b-list" style="display:grid;gap:.6rem"></div>
                 </div>
 <div id="admin-panel-docs" class="p-6 hidden">
                     <div class="x-legend" style="margin-bottom:1.25rem">
@@ -1005,6 +1030,8 @@ html.dark #fx-warn h3{color:#fca5a5}
                         <input type="password" id="admin-password" required class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-red-700">
                     </div>
                     <p id="admin-login-error" class="text-xs text-red-600 font-semibold hidden">Sai email hoặc mật khẩu!</p>
+                    <p id="admin-forgot-msg" class="text-xs font-semibold hidden"></p>
+                    <button type="button" onclick="handleForgotPassword()" class="text-xs font-semibold text-red-800 underline">Quên mật khẩu? Gửi liên kết đặt lại qua email</button>
                     <div class="flex justify-end gap-2 pt-2">
                         <button type="button" onclick="closeAdminLoginModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700">Hủy</button>
                         <button type="submit" id="admin-login-submit-btn" class="px-4 py-2 rounded-xl bg-red-800 hover:bg-red-900 text-white text-xs font-bold transition disabled:opacity-50 disabled:cursor-not-allowed">Đăng nhập</button>
@@ -2863,6 +2890,29 @@ html.dark #fx-warn h3{color:#fca5a5}
                 })))
             })));
 
+            // ===== Đề thi do Quản trị tạo (trắc nghiệm + điền vào ô trống) =====
+            const nz = s => String(s || "").normalize("NFC").trim().replace(/\s+/g, " ").toLowerCase();
+            const customSets = new Map();
+            function registerCustom(list) {
+                [...questionVault.keys()].filter(k => k.startsWith("c:")).forEach(k => questionVault.delete(k));
+                customSets.clear();
+                (list || []).forEach(ex => {
+                    const id = "c:" + ex.id;
+                    const qs = ex.questions.map((qi, n) => {
+                        const qKey = `${id}::${n}`;
+                        if (qi.type === "fill") {
+                            const ans = String(qi.answers).split(";;").map(g => g.split("|").map(nz).filter(Boolean));
+                            questionVault.set(qKey, { qKey, type: "fill", topic: ex.title, q: qi.q, options: [], answers: ans });
+                            return { qKey, type: "fill", q: qi.q, options: [], blanks: ans.length };
+                        }
+                        const o = qi.options.map((t, i) => ({ optKey: `${qKey}::opt_${i}`, text: t, isCorrect: i === qi.answer }));
+                        questionVault.set(qKey, { qKey, type: "mcq", topic: ex.title, q: qi.q, options: o, correctOptKey: o[qi.answer].optKey });
+                        return { qKey, q: qi.q, options: qi.options };
+                    });
+                    customSets.set(id, { id, shortTitle: ex.title, fullTitle: ex.description || ex.title, durationMin: ex.durationMin, questions: qs });
+                });
+            }
+
             function secureShuffle(array) {
                 const arr = [...array];
                 const randBuf = new Uint32Array(arr.length);
@@ -2877,7 +2927,10 @@ html.dark #fx-warn h3{color:#fca5a5}
             // Tạo danh sách câu hỏi đã xáo trộn phương án nhưng KHÔNG chứa trường answer
             function buildPublicQuestions(examVal) {
                 let selectedEntries = [];
-                if (examVal === "all") {
+                if (String(examVal).startsWith("c:")) {
+                    const cs = customSets.get(examVal);
+                    selectedEntries = cs ? cs.questions.map(q => questionVault.get(q.qKey)) : [];
+                } else if (examVal === "all") {
                     PRIVATE_BANK.forEach(set => {
                         set.questions.forEach((_, qIdx) => {
                             selectedEntries.push(questionVault.get(`${set.id}::${qIdx}`));
@@ -2895,6 +2948,7 @@ html.dark #fx-warn h3{color:#fca5a5}
                 }
 
                 return secureShuffle(selectedEntries).map(entry => {
+                    if (entry.type === "fill") return { qKey: entry.qKey, q: entry.q, options: [], topic: entry.topic, type: "fill", blanks: entry.answers.length };
                     const shuffledOpts = secureShuffle(entry.options).map(o => ({
                         optKey: o.optKey,
                         text: o.text
@@ -2926,6 +2980,11 @@ html.dark #fx-warn h3{color:#fca5a5}
                 const reviewDetails = publicQuestions.map((pubQ, idx) => {
                     const entry = questionVault.get(pubQ.qKey);
                     const userAnsIdx = userAnswers[idx];
+                    if (entry && entry.type === "fill") {
+                        const ok = Array.isArray(userAnsIdx) && entry.answers.every((alts, k) => alts.includes(nz(userAnsIdx[k])));
+                        if (ok) correctCount++;
+                        return { q: pubQ.q, topic: pubQ.topic, type: "fill", options: [], userAnswer: userAnsIdx === undefined ? null : userAnsIdx, correctAnswer: -1, correctText: entry.answers.map(a => a[0]).join("; "), isCorrect: ok };
+                    }
                     const correctIdx = entry
                         ? pubQ.options.findIndex(o => o.optKey === entry.correctOptKey)
                         : -1;
@@ -2951,6 +3010,8 @@ html.dark #fx-warn h3{color:#fca5a5}
 
             return Object.freeze({
                 getPublicSets: () => publicSets,
+                getCustomSets: () => [...customSets.values()],
+                registerCustom,
                 buildPublicQuestions,
                 checkSingleChoice,
                 gradeSubmission
@@ -2959,6 +3020,7 @@ html.dark #fx-warn h3{color:#fca5a5}
 
         // Biến toàn cục EXAM_SETS hoàn toàn không chứa đáp án
         const EXAM_SETS = ExamSecurityEngine.getPublicSets();
+        const ALLOWED_UNITS = ["Chi bộ HSNV Cảnh sát", "Chi bộ HSNV An ninh", "Chi bộ Tàng thư CCCP", "Chi bộ Trung tâm TT, DLNV", "Thí sinh tự do"];
 
         // ==================== TIỆN ÍCH BẢO MẬT & CHỐNG XSS / INJECTION ====================
         function escapeHTML(str) {
@@ -3562,7 +3624,7 @@ html.dark #fx-warn h3{color:#fca5a5}
                 savedUnit = localStorage.getItem("pa_thanhhoa_unit");
             } catch (_) {}
             if (savedName) document.getElementById("candidate-name").value = savedName;
-            if (savedUnit) document.getElementById("candidate-unit").value = savedUnit;
+            if (savedUnit && ALLOWED_UNITS.includes(savedUnit)) document.getElementById("candidate-unit").value = savedUnit;
         });
 
         // Đồng bộ số câu hiển thị trong danh sách chọn bộ đề với dữ liệu thực tế
@@ -3585,6 +3647,15 @@ html.dark #fx-warn h3{color:#fca5a5}
             const descBox = document.getElementById("exam-desc-box");
             const durationSelect = document.getElementById("exam-duration");
 
+            if (String(val).startsWith("c:")) {
+                const cs = ExamSecurityEngine.getCustomSets().find(s => s.id === val);
+                if (cs) {
+                    descBox.innerHTML = `<strong class="text-red-800">Đề thi:</strong> ${escapeHTML(cs.fullTitle)} <span class="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-800 rounded font-bold">${cs.questions.length} câu</span>`;
+                    if (![...durationSelect.options].some(o => o.value === String(cs.durationMin))) durationSelect.add(new Option(cs.durationMin + " phút (theo đề)", String(cs.durationMin)));
+                    durationSelect.value = String(cs.durationMin);
+                }
+                return;
+            }
             if (val === "all") {
                 descBox.innerHTML = `<strong class="text-red-800">Nội dung:</strong> Tổng hợp <strong>${EXAM_SETS.reduce((s, x) => s + x.questions.length, 0)} câu hỏi</strong> thuộc cả 08 bộ đề (lịch sử Đảng, Văn kiện Đại hội XIV và các văn bản của Hội nghị Trung ương 4 khóa XIV). Phù hợp để ôn tập toàn diện.`;
                 durationSelect.value = "90";
@@ -3608,10 +3679,10 @@ html.dark #fx-warn h3{color:#fca5a5}
             const examVal = document.getElementById("exam-set").value;
             const allowedDurations = [15, 20, 30, 45, 60, 90];
             let duration = parseInt(document.getElementById("exam-duration").value, 10);
-            if (!allowedDurations.includes(duration)) duration = 20;
+            if (String(examVal).startsWith("c:")) duration = Math.min(120, Math.max(1, duration || 20)); else if (!allowedDurations.includes(duration)) duration = 20;
             const instantFeedback = Boolean(document.getElementById("instant-feedback").checked);
 
-            if (!name || !unit) return;
+            if (!name || !unit || !ALLOWED_UNITS.includes(unit)) return;
 
             try {
                 localStorage.setItem("pa_thanhhoa_name", name);
@@ -3621,7 +3692,11 @@ html.dark #fx-warn h3{color:#fca5a5}
             let shortTitle = "";
             let fullTitle = "";
 
-            if (examVal === "all") {
+            if (String(examVal).startsWith("c:")) {
+                const cs = ExamSecurityEngine.getCustomSets().find(s => s.id === examVal);
+                if (!cs) return;
+                shortTitle = cs.shortTitle; fullTitle = cs.fullTitle;
+            } else if (examVal === "all") {
                 shortTitle = `Tổng hợp 08 bộ đề (${EXAM_SETS.reduce((s, x) => s + x.questions.length, 0)} câu)`;
                 fullTitle = "Toàn bộ 08 bộ câu hỏi: lịch sử Đảng, Văn kiện Đại hội XIV và các văn bản Hội nghị Trung ương 4 khóa XIV";
             } else if (examVal === "random30") {
@@ -3750,10 +3825,11 @@ html.dark #fx-warn h3{color:#fca5a5}
             feedbackBanner.classList.add("hidden");
 
             // Chỉ truy vấn kiểm tra đơn lẻ từ ExamSecurityEngine khi bật Tự ôn luyện và thí sinh đã chọn phương án
-            const instantCheck = (state.instantFeedback && selectedAns !== null)
+            const instantCheck = (state.instantFeedback && selectedAns !== null && qObj.type !== "fill")
                 ? ExamSecurityEngine.checkSingleChoice(qObj.qKey, qObj.options, selectedAns)
                 : null;
 
+            if (qObj.type === "fill") renderFillInputs(qObj, selectedAns, optionsContainer);
             qObj.options.forEach((optObj, optIdx) => {
                 const isSelected = selectedAns === optIdx;
                 let cardClasses = "w-full text-left p-4 rounded-xl border-2 transition flex items-start gap-3.5 cursor-pointer select-none ";
@@ -3820,6 +3896,27 @@ html.dark #fx-warn h3{color:#fca5a5}
 
             updateQuestionGridHighlight();
             refreshIcons();
+        }
+
+        function renderFillInputs(qObj, sel, box) {
+            const st = ExamSessionManager.getState();
+            const n = qObj.blanks || 1, cur = Array.isArray(sel) ? sel : [];
+            for (let k = 0; k < n; k++) {
+                const w = document.createElement("label");
+                w.className = "block";
+                w.innerHTML = `<span class="text-xs font-bold text-slate-600">${n > 1 ? "Ô trống " + (k + 1) : "Đáp án của đồng chí (điền vào chỗ ___)"}</span>`;
+                const inp = document.createElement("input");
+                inp.type = "text"; inp.maxLength = 200; inp.autocomplete = "off"; inp.value = cur[k] || "";
+                inp.className = "w-full mt-1 px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-red-700 outline-none font-medium text-slate-900 bg-white";
+                inp.addEventListener("input", () => {
+                    if (!st.isExamActive || st.isSubmitting) return;
+                    const arr = [...box.querySelectorAll("input")].map(i => i.value);
+                    st.userAnswers[st.currentIndex] = arr.some(v => v.trim()) ? arr : null;
+                    document.getElementById("answered-count").textContent = st.userAnswers.filter(a => a !== null).length;
+                    updateQuestionGridHighlight();
+                });
+                w.appendChild(inp); box.appendChild(w);
+            }
         }
 
         function selectOption(optIdx) {
@@ -4061,7 +4158,7 @@ html.dark #fx-warn h3{color:#fca5a5}
                         : `<span class="px-2.5 py-0.5 rounded-md bg-red-100 text-red-800 font-bold text-xs">✕ Sai</span>`);
 
                 let optionsHtml = "";
-                item.options.forEach((opt, optIdx) => {
+                (item.type === "fill" ? [] : item.options).forEach((opt, optIdx) => {
                     const letter = ["A", "B", "C", "D"][optIdx];
                     const cleanOpt = opt.replace(/^[A-D]\.\s*/i, "");
                     const isThisCorrect = optIdx === item.correctAnswer;
@@ -4089,6 +4186,10 @@ html.dark #fx-warn h3{color:#fca5a5}
                     `;
                 });
 
+                if (item.type === "fill") {
+                    const ua = Array.isArray(userAns) ? userAns.filter(v => String(v).trim()).join("; ") : "(Chưa trả lời)";
+                    optionsHtml = `<div class="p-3 rounded-lg border text-sm ${isCorrect ? "bg-emerald-50 border-emerald-400" : "bg-red-50 border-red-400"}">Đồng chí điền: <b>${escapeHTML(ua)}</b></div><div class="p-3 rounded-lg border text-sm bg-emerald-50 border-emerald-400">Đáp án đúng: <b>${escapeHTML(item.correctText)}</b></div>`;
+                }
                 const card = document.createElement("div");
                 card.className = `p-5 rounded-xl border ${isCorrect ? "border-emerald-200 bg-emerald-50/20" : "border-red-200 bg-red-50/20"}`;
                 card.innerHTML = `
@@ -4336,8 +4437,9 @@ html.dark #fx-warn h3{color:#fca5a5}
         ].map((x) => x.map(q).join(","));
         let csv = "\uFEFF" + rows.join("\n") + "\n\n" + ["STT", "Nội dung câu hỏi", "Đáp án đã chọn", "Đáp án đúng", "Kết quả"].map(q).join(",") + "\n";
         s.reviewDetails.forEach((it, i) => {
-            const pick = it.userAnswer === null || it.userAnswer === undefined ? "(Chưa trả lời)" : LET[it.userAnswer] + ". " + it.options[it.userAnswer];
-            const right = it.correctAnswer >= 0 ? LET[it.correctAnswer] + ". " + it.options[it.correctAnswer] : "";
+            const fl = it.type === "fill";
+            const pick = it.userAnswer === null || it.userAnswer === undefined ? "(Chưa trả lời)" : (fl ? [].concat(it.userAnswer).join("; ") : LET[it.userAnswer] + ". " + it.options[it.userAnswer]);
+            const right = fl ? it.correctText : it.correctAnswer >= 0 ? LET[it.correctAnswer] + ". " + it.options[it.correctAnswer] : "";
             csv += [i + 1, q(it.q), q(pick), q(right), q(it.isCorrect ? "Đúng" : "Sai")].join(",") + "\n";
         });
         const a = document.createElement("a");
@@ -4394,7 +4496,7 @@ html.dark #fx-warn h3{color:#fca5a5}
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, getDoc, setDoc, updateDoc, deleteDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, updatePassword, sendPasswordResetEmail, EmailAuthProvider, reauthenticateWithCredential, signOut, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCdPtq0WDh2kAxyVWJlB_wCvn_4tUaaj9A",
@@ -4597,7 +4699,7 @@ html.dark #fx-warn h3{color:#fca5a5}
                     name: String(state.candidateName).slice(0, 100),
                     unit: String(state.candidateUnit).slice(0, 200),
                     examTitle: String(state.examShortTitle).slice(0, 300),
-                    examSelection: String(state.examSelection).slice(0, 10),
+                    examSelection: String(state.examSelection).slice(0, 30),
                     loginTime: loginTimeStr,
                     timestamp: serverTimestamp(),
                     tabSwitches: 0,
@@ -5143,6 +5245,7 @@ html.dark #fx-warn h3{color:#fca5a5}
         }
 
         // ===== Gộp tên chi bộ gần giống nhau (bỏ dấu, hoa/thường, tiền tố "Chi bộ", lỗi gõ nhỏ, đảo từ) =====
+        const CANON_NORM = new Set(ALLOWED_UNITS.map(u => String(u).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]+/g, " ").trim().replace(/^(chi bo|cbo|cb)\s+/, "").trim()));
         function unitNorm(u) {
             return String(u || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d")
                 .replace(/[^a-z0-9]+/g, " ").trim().replace(/^(chi bo|cbo|cb)\s+/, "").trim();
@@ -5180,8 +5283,8 @@ html.dark #fx-warn h3{color:#fca5a5}
             const clusters = [];
             entries.forEach(e => {
                 let best = null, bestSim = 0;
-                if (e.norm) clusters.forEach(c => {
-                    if (!c.norm) return;
+                if (e.norm && !CANON_NORM.has(e.norm)) clusters.forEach(c => {
+                    if (!c.norm || CANON_NORM.has(c.norm)) return;
                     const sim = unitSim(c.norm, e.norm);
                     if (sim >= threshold && sim > bestSim) { best = c; bestSim = sim; }
                 });
@@ -5624,12 +5727,12 @@ html.dark #fx-warn h3{color:#fca5a5}
 
         window.switchAdminTab = (tab) => {
             if (!isSessionValid()) { window.logoutAdmin(); return; }
-            const isDocs = tab === "docs";
-            document.getElementById("admin-panel-results").classList.toggle("hidden", isDocs);
-            document.getElementById("admin-panel-docs").classList.toggle("hidden", !isDocs);
-            document.getElementById("admin-tab-results").classList.toggle("active", !isDocs);
-            document.getElementById("admin-tab-docs").classList.toggle("active", isDocs);
-            if (isDocs) renderAdminRefList();
+            ["results", "exams", "docs"].forEach(t => {
+                document.getElementById("admin-panel-" + t).classList.toggle("hidden", t !== tab);
+                document.getElementById("admin-tab-" + t).classList.toggle("active", t === tab);
+            });
+            if (tab === "docs") renderAdminRefList();
+            if (tab === "exams") { if (!builderQs.length) resetBuilder(); loadCustomExams(); }
             if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons();
         };
 
@@ -5646,6 +5749,216 @@ html.dark #fx-warn h3{color:#fca5a5}
 
         // Tải văn bản bổ sung cho mọi người dùng ngay khi mở trang
         loadCustomRefDocs();
+
+        // ==================== QUÊN MẬT KHẨU QUẢN TRỊ ====================
+        window.handleForgotPassword = async () => {
+            const msg = document.getElementById("admin-forgot-msg");
+            const email = document.getElementById("admin-username").value.trim();
+            msg.classList.remove("hidden");
+            if (!auth || !email.includes("@")) { msg.className = "text-xs font-semibold text-red-600"; msg.textContent = "Nhập email quản trị vào ô phía trên trước."; return; }
+            try { await sendPasswordResetEmail(auth, email); } catch (_) {}
+            msg.className = "text-xs font-semibold text-emerald-700";
+            msg.textContent = "Nếu email là tài khoản quản trị, liên kết đặt lại mật khẩu đã được gửi. Hãy kiểm tra hộp thư (cả mục Spam).";
+        };
+
+        // ==================== QUẢN TRỊ: TẠO ĐỀ THI (TRẮC NGHIỆM + ĐIỀN Ô TRỐNG) ====================
+        const EXAM_COLLECTION = "custom_exams";
+        let builderQs = [], builderEditId = "", adminExams = [];
+        const bEl = (id) => document.getElementById(id);
+        const newQ = (t) => t === "fill" ? { type: "fill", q: "", answers: "" } : { type: "mcq", q: "", options: ["", "", "", ""], answer: 0 };
+        function bMsg(t, ok) { const e = bEl("exam-b-msg"); e.textContent = t; e.style.color = ok ? "#047857" : "#b91c1c"; }
+        function syncBuilder() {
+            document.querySelectorAll("#exam-builder-list [data-f]").forEach(el => {
+                const i = +el.dataset.i, f = el.dataset.f, q = builderQs[i];
+                if (!q) return;
+                if (f === "type") { if (el.value !== q.type) { const t = newQ(el.value); t.q = q.q; builderQs[i] = t; } }
+                else if (f === "answer") { if (el.checked) q.answer = +el.value; }
+                else if (f.startsWith("opt")) { if (q.options) q.options[+f.slice(3)] = el.value; }
+                else if (f === "answers") { if (q.type === "fill") q.answers = el.value; }
+                else q[f] = el.value;
+            });
+        }
+        function renderBuilder() {
+            bEl("exam-builder-list").innerHTML = builderQs.map((x, i) => `<div class="x-qcard">
+                <div class="x-qhead"><b>Câu ${i + 1}</b>
+                    <select data-i="${i}" data-f="type" class="x-input" style="width:auto"><option value="mcq"${x.type === "mcq" ? " selected" : ""}>Trắc nghiệm</option><option value="fill"${x.type === "fill" ? " selected" : ""}>Điền vào ô trống</option></select>
+                    <button type="button" data-act="del" data-i="${i}" class="x-btn x-btn-ghost">Xóa câu</button></div>
+                <textarea data-i="${i}" data-f="q" maxlength="1000" class="x-input" placeholder="${x.type === "fill" ? "Nội dung câu hỏi, gõ ___ ở chỗ cần điền. VD: Đại hội ___ của Đảng họp năm ___." : "Nội dung câu hỏi"}">${escapeHTML(x.q)}</textarea>
+                ${x.type === "fill"
+                    ? `<input data-i="${i}" data-f="answers" maxlength="1000" class="x-input" value="${escapeHTML(x.answers)}" placeholder="Đáp án: cách 1 | cách 2 ;; đáp án ô 2 ...">`
+                    : x.options.map((o, k) => `<label style="display:flex;gap:.5rem;align-items:center"><input type="radio" name="c${i}" data-i="${i}" data-f="answer" value="${k}"${x.answer === k ? " checked" : ""} title="Đáp án đúng"><input data-i="${i}" data-f="opt${k}" maxlength="500" class="x-input" value="${escapeHTML(o)}" placeholder="Phương án ${"ABCD"[k]} (chọn nút tròn nếu là đáp án đúng)"></label>`).join("")}
+            </div>`).join("");
+        }
+        function resetBuilder() {
+            builderEditId = ""; builderQs = [newQ("mcq")];
+            bEl("exam-b-title").value = ""; bEl("exam-b-desc").value = ""; bEl("exam-b-dur").value = "20";
+            bEl("exam-b-save-label").textContent = "Lưu đề thi"; bEl("exam-b-cancel").classList.add("hidden");
+            renderBuilder();
+        }
+        bEl("exam-builder-list").addEventListener("change", (e) => { if (e.target.dataset.f === "type") { syncBuilder(); renderBuilder(); } });
+        bEl("exam-builder-list").addEventListener("click", (e) => {
+            const b = e.target.closest("[data-act='del']"); if (!b) return;
+            syncBuilder(); builderQs.splice(+b.dataset.i, 1); if (!builderQs.length) builderQs.push(newQ("mcq")); renderBuilder();
+        });
+        bEl("exam-b-add-mcq").onclick = () => { syncBuilder(); builderQs.push(newQ("mcq")); renderBuilder(); };
+        bEl("exam-b-add-fill").onclick = () => { syncBuilder(); builderQs.push(newQ("fill")); renderBuilder(); };
+        bEl("exam-b-cancel").onclick = () => { resetBuilder(); bMsg("", true); };
+
+        // ----- Dán nhanh: phân tích văn bản thành câu hỏi -----
+        bEl("exam-b-paste").placeholder = "Câu 1. Nội dung câu hỏi thứ nhất?\nA. Phương án A\nB. Phương án B\n*C. Phương án đúng (đánh dấu * trước chữ cái)\nD. Phương án D\n\nCâu 2. Nội dung câu hỏi thứ hai?\nA. Phương án A\nB. Phương án B\nĐáp án: A\n\nCâu 3. Đại hội XIII của Đảng họp năm [[2021]] tại [[Hà Nội|Hà nội]].\n\nCâu 4. Thủ đô của nước Việt Nam là ____ .\nĐiền: Hà Nội";
+        function parseQuestionText(text) {
+            const lines = String(text || "").replace(/\r/g, "").split("\n");
+            const START = /^\s*Câu\s*\d*\s*[.:)]\s*/i, blocks = [];
+            if (lines.some(l => START.test(l))) {
+                let cur = null;
+                lines.forEach(l => { if (START.test(l)) { cur = [l.replace(START, "").trim()]; blocks.push(cur); } else if (cur && l.trim()) cur.push(l.trim()); });
+            } else {
+                let b = [];
+                lines.concat([""]).forEach(l => { if (l.trim()) b.push(l.trim()); else if (b.length) { blocks.push(b); b = []; } });
+            }
+            const out = [], errs = [], bad = [], L = "ABCD", clean = (g) => g.split("|").map(s => s.trim()).filter(Boolean).join("|");
+            blocks.forEach((b, n) => {
+                const fail = (m) => { errs.push(`Câu ${n + 1}: ${m}`); bad.push(`Câu ${n + 1}. ` + b.join("\n")); };
+                const qt = [], opts = []; let letter = null, fillAns = null, star = [];
+                b.forEach((raw, i) => {
+                    const l = raw.trim(); let m;
+                    if (i === 0) qt.push(l);
+                    else if ((m = /^(?:Đáp án|Dap an|ĐA)\s*:\s*(.+)$/i.exec(l))) letter = m[1].trim();
+                    else if ((m = /^(?:Điền|Dien)\s*:\s*(.+)$/i.exec(l))) fillAns = m[1].trim();
+                    else if ((m = /^(\*)?\s*([A-Da-d])\s*[.)]\s*(\*)?\s*(.*)$/.exec(l)) && L[opts.length] === m[2].toUpperCase()) {
+                        if (m[1] || m[3]) star.push(opts.length);
+                        opts.push(m[4].trim());
+                    } else if (opts.length) opts[opts.length - 1] += " " + l;
+                    else qt.push(l);
+                });
+                let q = qt.join(" "), groups = [];
+                q = q.replace(/\[\[(.+?)\]\]/g, (_, a) => { groups.push(clean(a)); return "___"; }).replace(/_{3,}/g, "___");
+                if (!q) return fail("thiếu nội dung câu hỏi.");
+                if (groups.length || fillAns !== null) {
+                    if (!groups.length) groups = fillAns.split(";;").map(clean);
+                    const blanks = (q.match(/___/g) || []).length;
+                    if (!blanks) return fail("câu điền ô trống cần có chỗ trống (____ hoặc [[đáp án]]).");
+                    if (groups.length !== blanks || groups.some(g => !g)) return fail(`có ${blanks} ô trống nhưng đáp án có ${groups.length} nhóm.`);
+                    out.push({ type: "fill", q, answers: groups.join(";;") });
+                } else {
+                    if (opts.length < 2 || opts.length > 4 || opts.some(o => !o)) return fail("cần 2–4 phương án A, B, C, D (theo thứ tự, không để trống).");
+                    if (star.length > 1) return fail("có nhiều hơn một phương án đánh dấu *.");
+                    const ans = star.length ? star[0] : (letter ? L.indexOf(letter[0].toUpperCase()) : -1);
+                    if (ans < 0 || ans >= opts.length) return fail("chưa rõ đáp án đúng (dùng * trước phương án hoặc dòng 'Đáp án: X').");
+                    out.push({ type: "mcq", q, options: [...opts, "", "", "", ""].slice(0, 4), answer: ans });
+                }
+            });
+            return { out, errs, bad };
+        }
+        bEl("exam-b-parse").onclick = () => {
+            syncBuilder();
+            const { out, errs, bad } = parseQuestionText(bEl("exam-b-paste").value);
+            if (!out.length && !errs.length) return bMsg("Chưa có nội dung để phân tích.", false);
+            const empty = builderQs.length === 1 && builderQs[0].type === "mcq" && !builderQs[0].q.trim() && builderQs[0].options.every(o => !o.trim());
+            const base = empty ? [] : builderQs, room = Math.max(0, 200 - base.length), take = out.slice(0, room);
+            builderQs = base.concat(take); if (!builderQs.length) builderQs = [newQ("mcq")];
+            renderBuilder();
+            let msg = `Đã thêm ${take.length} câu` + (out.length > room ? ` (bỏ ${out.length - room} câu vượt giới hạn 200 câu/đề)` : "") + ".";
+            if (errs.length) { bEl("exam-b-paste").value = bad.join("\n\n"); bMsg(msg + ` ${errs.length} câu lỗi được giữ lại trong ô dán để sửa: ` + errs.slice(0, 4).join(" · "), false); }
+            else { bEl("exam-b-paste").value = ""; bMsg(msg + " Kiểm tra lại bên dưới rồi bấm Lưu đề thi.", true); }
+        };
+
+        bEl("exam-b-save").onclick = async () => {
+            if (!isSessionValid()) { window.logoutAdmin(); return; }
+            syncBuilder();
+            const title = sanitizeInput(bEl("exam-b-title").value, 200);
+            if (!title) return bMsg("Vui lòng nhập tên đề thi.", false);
+            if (builderQs.length > 200) return bMsg("Mỗi đề tối đa 200 câu.", false);
+            const durationMin = Math.min(120, Math.max(1, Math.round(Number(bEl("exam-b-dur").value)) || 20));
+            const questions = [];
+            for (let i = 0; i < builderQs.length; i++) {
+                const x = builderQs[i], q = sanitizeInput(x.q, 1000), tag = `Câu ${i + 1}: `;
+                if (!q) return bMsg(tag + "chưa có nội dung câu hỏi.", false);
+                if (x.type === "fill") {
+                    const blanks = (q.match(/___/g) || []).length;
+                    const groups = String(x.answers || "").split(";;").map(g => g.split("|").map(s => sanitizeInput(s, 200)).filter(Boolean));
+                    if (!blanks) return bMsg(tag + "cần ít nhất một chỗ trống ___ trong câu hỏi.", false);
+                    if (groups.length !== blanks || groups.some(g => !g.length)) return bMsg(tag + `có ${blanks} ô trống nhưng đáp án khai báo ${groups.length} nhóm (phân cách bằng ;;) hoặc có nhóm rỗng.`, false);
+                    questions.push({ type: "fill", q, answers: groups.map(g => g.join("|")).join(";;") });
+                } else {
+                    const raw = x.options.map((o, k) => ({ t: sanitizeInput(o, 500), k })).filter(o => o.t);
+                    if (raw.length < 2) return bMsg(tag + "cần ít nhất 2 phương án.", false);
+                    const ai = raw.findIndex(o => o.k === x.answer);
+                    if (ai < 0) return bMsg(tag + "chưa chọn đáp án đúng (hoặc đáp án đúng đang để trống).", false);
+                    questions.push({ type: "mcq", q, options: raw.map(o => o.t), answer: ai });
+                }
+            }
+            if (!db) return bMsg("Chưa kết nối được máy chủ Firebase.", false);
+            const btn = bEl("exam-b-save"); btn.disabled = true;
+            try {
+                const payload = { title, description: sanitizeInput(bEl("exam-b-desc").value, 500), durationMin, questions };
+                if (builderEditId) await updateDoc(doc(db, EXAM_COLLECTION, builderEditId), { ...payload, updatedAt: serverTimestamp() });
+                else await setDoc(doc(collection(db, EXAM_COLLECTION)), { ...payload, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+                bMsg("Đã lưu đề thi.", true); resetBuilder(); await loadCustomExams();
+            } catch (err) {
+                console.error(err); bMsg("Không lưu được (" + ((err && err.code) || "lỗi") + "). Kiểm tra Firestore Rules đã cho phép tài khoản quản trị ghi custom_exams.", false);
+            } finally { btn.disabled = false; }
+        };
+
+        function normCustomExam(id, d) {
+            try {
+                const questions = (Array.isArray(d.questions) ? d.questions : []).map(x => {
+                    const q = sanitizeInput(x && x.q, 1000); if (!q) return null;
+                    if (x.type === "fill") { const a = String(x.answers || "").slice(0, 1000); return a ? { type: "fill", q, answers: a } : null; }
+                    const o = (Array.isArray(x.options) ? x.options : []).map(t => sanitizeInput(t, 500)), a = Number(x.answer);
+                    if (o.length < 2 || o.length > 4 || o.some(t => !t) || !Number.isInteger(a) || a < 0 || a >= o.length) return null;
+                    return { type: "mcq", q, options: o, answer: a };
+                }).filter(Boolean);
+                if (!questions.length) return null;
+                const c = d.createdAt && d.createdAt.toMillis ? d.createdAt.toMillis() : 0;
+                return { id, title: sanitizeInput(d.title, 200) || "Đề thi", description: sanitizeInput(d.description, 500), durationMin: Math.min(120, Math.max(1, Math.round(Number(d.durationMin)) || 20)), questions, _created: c };
+            } catch (_) { return null; }
+        }
+        function refreshExamSelect() {
+            const sel = document.getElementById("exam-set"); if (!sel) return;
+            const keep = sel.value, old = document.getElementById("custom-exam-group"); if (old) old.remove();
+            const list = ExamSecurityEngine.getCustomSets();
+            if (list.length) {
+                const g = document.createElement("optgroup"); g.id = "custom-exam-group"; g.label = "Đề thi do Quản trị tạo";
+                list.forEach(s => { const o = document.createElement("option"); o.value = s.id; o.textContent = `${s.shortTitle} (${s.questions.length} câu)`; g.appendChild(o); });
+                sel.appendChild(g);
+            }
+            if ([...sel.options].some(o => o.value === keep)) sel.value = keep;
+            updateExamDescription();
+        }
+        window.loadCustomExams = async function loadCustomExams() {
+            let list = [];
+            if (db) {
+                try { const snap = await getDocs(collection(db, EXAM_COLLECTION)); snap.forEach(ds => list.push(normCustomExam(ds.id, ds.data()))); }
+                catch (err) { console.warn("Chưa đọc được đề thi tùy chỉnh (kiểm tra Firestore Rules):", err && err.code); }
+            }
+            adminExams = list.filter(Boolean).sort((a, b) => b._created - a._created);
+            ExamSecurityEngine.registerCustom(adminExams);
+            refreshExamSelect(); renderAdminExamList();
+        };
+        function renderAdminExamList() {
+            bEl("exam-b-count").textContent = adminExams.length;
+            bEl("exam-b-list").innerHTML = adminExams.length ? adminExams.map(e => {
+                const nf = e.questions.filter(q => q.type === "fill").length;
+                return `<div class="x-qcard"><div class="x-qhead"><b>${escapeHTML(e.title)}</b><span style="font-size:.75rem;color:#64748b">${e.questions.length} câu (${e.questions.length - nf} trắc nghiệm, ${nf} điền ô trống) · ${e.durationMin} phút</span>
+                    <button type="button" data-ea="edit" data-id="${escapeHTML(e.id)}" class="x-btn x-btn-ghost">Sửa</button>
+                    <button type="button" data-ea="del" data-id="${escapeHTML(e.id)}" class="x-btn x-btn-ghost" style="color:#b91c1c">Xóa</button></div></div>`;
+            }).join("") : '<p style="color:#64748b;font-size:.85rem">Chưa có đề thi nào do quản trị tạo.</p>';
+        }
+        bEl("exam-b-list").addEventListener("click", async (ev) => {
+            const b = ev.target.closest("[data-ea]"); if (!b || !isSessionValid()) return;
+            const e = adminExams.find(x => x.id === b.dataset.id); if (!e) return;
+            if (b.dataset.ea === "edit") {
+                builderEditId = e.id; bEl("exam-b-title").value = e.title; bEl("exam-b-desc").value = e.description; bEl("exam-b-dur").value = e.durationMin;
+                builderQs = e.questions.map(q => q.type === "fill" ? { ...q } : { ...q, options: [...q.options, "", "", ""].slice(0, 4) });
+                bEl("exam-b-save-label").textContent = "Cập nhật đề thi"; bEl("exam-b-cancel").classList.remove("hidden");
+                renderBuilder(); window.scrollTo({ top: bEl("admin-panel-exams").offsetTop, behavior: "smooth" });
+            } else if (b.dataset.confirm === "1") {
+                try { await deleteDoc(doc(db, EXAM_COLLECTION, e.id)); if (builderEditId === e.id) resetBuilder(); await loadCustomExams(); bMsg("Đã xóa đề thi.", true); }
+                catch (err) { bMsg("Không xóa được (" + ((err && err.code) || "lỗi") + ").", false); }
+            } else { b.dataset.confirm = "1"; b.textContent = "Bấm lại để xóa"; setTimeout(() => { b.dataset.confirm = ""; b.textContent = "Xóa"; }, 4000); }
+        });
+        loadCustomExams();
     </script>
 </body>
 </html>
